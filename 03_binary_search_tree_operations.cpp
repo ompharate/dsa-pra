@@ -105,19 +105,19 @@ int main()
 {
     TreeNode *root = nullptr;
 
-    int values[] = {5, 3, 7, 2, 4, 6, 8};
-    int numValues = sizeof(values) / sizeof(values[0]);
+    int numValues;
+    cout << "Enter the number of values: ";
+    cin >> numValues;
+
+    cout << "Enter " << numValues << " values:" << endl;
     for (int i = 0; i < numValues; ++i)
     {
-        insert(root, values[i]);
+        int value;
+        cin >> value;
+        insert(root, value);
     }
 
     cout << "BST (Inorder Traversal): ";
-    inorderTraversal(root);
-    cout << endl;
-
-    insert(root, 9);
-    cout << "BST after inserting 9 (Inorder Traversal): ";
     inorderTraversal(root);
     cout << endl;
 
@@ -130,7 +130,9 @@ int main()
     inorderTraversal(root);
     cout << endl;
 
-    int searchValue = 6;
+    int searchValue;
+    cout << "Enter a value to search in the BST: ";
+    cin >> searchValue;
     if (search(root, searchValue))
     {
         cout << searchValue << " is found in the BST." << endl;

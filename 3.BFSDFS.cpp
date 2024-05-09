@@ -87,15 +87,22 @@ public:
 
 int main()
 {
-    Graph graph(6);
+    int vertices, edges;
+    std::cout << "Enter the number of vertices: ";
+    std::cin >> vertices;
 
-    graph.addEdge(0, 1);
-    graph.addEdge(0, 2);
-    graph.addEdge(1, 3);
-    graph.addEdge(1, 4);
-    graph.addEdge(2, 4);
-    graph.addEdge(3, 5);
-    graph.addEdge(4, 5);
+    std::cout << "Enter the number of edges: ";
+    std::cin >> edges;
+
+    Graph graph(vertices);
+
+    std::cout << "Enter the edges (u v):" << std::endl;
+    for (int i = 0; i < edges; ++i)
+    {
+        int u, v;
+        std::cin >> u >> v;
+        graph.addEdge(u, v);
+    }
 
     std::cout << "Breadth First Search (BFS): ";
     graph.BFS(0);
