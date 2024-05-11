@@ -1,62 +1,130 @@
 #include <iostream>
 using namespace std;
 
-struct Node {
-    int data;
-    Node* left;
-    Node* right;
-    bool isThreaded; // Indicates if the right pointer is threaded
+struct Node
+{
+    int key;
+    Node *left;
+    Node *right;
+    bool isThreaded;
 };
 
-// Function to create a new node
-Node* createNode(int data) {
-    Node* newNode = new Node();
-    newNode->data = data;
-    newNode->left = nullptr;
-    newNode->right = nullptr;
-    newNode->isThreaded = false;
-    return newNode;
+Node *newNode(int key)
+{
+    Node *temp = new Node;
+    temp->key = key;
+    temp->left = nullptr;
+    temp->right = nullptr;
+    temp->isThreaded = false;
+    return temp;
 }
 
-// Function to insert a new node into the threaded BST
-Node* insert(Node* root, int data) {
-    if (!root)
-        return createNode(data);
-
-    if (data < root->data) {
-        root->left = insert(root->left, data);
-        if (root->left->right == nullptr) {
-            root->left->right = root;
-            root->left->isThreaded = true;
-        }
-    } else {
-        if (root->isThreaded || root->right == nullptr) {
-            Node* temp = createNode(data);
-            temp->right = root->right;
-            root->right = temp;
-            root->isThreaded = false;
-        } else {
-            root->right = insert(root->right, data);
-        }
+Node *insertNode(Node *root, int key)
+{
+    if (root == nullptr)
+    {
+        return newNode(key);
     }
+
+    if (key < root->key)
+    {
+        root->left = insertNode(root->left, key);
+    }
+    else if (key > root->key)
+    {
+        root->right = insertNode(root->right, key);
+    }
+
     return root;
 }
 
-// Function to do inorder traversal of TBST
+Node *buildTreeFromInput()
+{
+    Node *root = nullptr;
+    int value;
 
+    cout << "Enter root data: ";
+    cin >> value;
+    root = newNode(value);
 
+    while (true)
+    {
+        cout << "Enter node data (or -1 to stop): ";
+        cin >> value;
+        if (value == -1)
+        {
+            break;
+        }
+        insertNode(root, value);
+    }
 
-int main() {
-    Node* root = nullptr;
-    root = insert(root, 10);
-    root = insert(root, 5);
-    root = insert(root, 15);
-    root = insert(root, 3);
-    root = insert(root, 7);
-    root = insert(root, 12);
-    root = insert(root, 17);
+    return root;
+}
 
-    cout << "Inorder traversal of threaded BST: ";
+void inorder(Node *root)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    Node *current = root;
+
+    while (current->left != nullptr)
+    {
+        current = current->left;
+    }
+
+    while (current != nullptr)
+    {
+        cout << current->key << " ";
+
+        if (current->isThreaded)
+        {
+            current = current->right;
+        }
+        else
+        {
+            current = current->right;
+            if (current != nullptr)
+            {
+                while (current->left != nullptr)
+                {
+                    current = current->left;
+                }
+            }
+        }
+    }
+}
+
+void createThread(Node *root, Node *&prev)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    createThread(root->left, prev);
+
+    if (prev != nullptr && prev->right == nullptr)
+    {
+        prev->right = root;
+        prev->isThreaded = true;
+    }
+
+    prev = root;
+
+    createThread(root->right, prev);
+}
+
+int main()
+{
+    Node *root = buildTreeFromInput();
+
+    Node *prev = nullptr;
+    createThread(root, prev);
+
+    cout << "Inorder traversal: ";
     inorder(root);
     cout << endl;
 
