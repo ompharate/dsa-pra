@@ -1,80 +1,74 @@
 #include <iostream>
 #include <vector>
+#include <climits>
 
 using namespace std;
 
-const int INF = 999;
+#define V 5 
 
-int minCostEdge(int n, const vector<int> &minCost, const vector<bool> &visited)
-{
-    int minCostEdge = -1;
-    int minCostValue = INF;
+int minKey(vector<int>& key, vector<bool>& mstSet) {
+    int min = INT_MAX, min_index;
 
-    for (int i = 0; i < n; ++i)
-    {
-        if (!visited[i] && minCost[i] < minCostValue)
-        {
-            minCostValue = minCost[i];
-            minCostEdge = i;
+    for (int v = 0; v < V; ++v) {
+        if (!mstSet[v] && key[v] < min) {
+            min = key[v];
+            min_index = v;
         }
     }
 
-    return minCostEdge;
+    return min_index;
 }
 
-vector<pair<int, int>> primMST(const vector<vector<int>> &graph, int n)
-{
-    vector<bool> visited(n, false);
-    vector<int> minCost(n, INF);
-    vector<int> parent(n, -1);
-    vector<pair<int, int>> mst;
+void printMST(vector<int>& parent, vector<vector<int>>& graph) {
+    cout << "Edge \tWeight\n";
+    for (int i = 1; i < V; ++i)
+        cout << parent[i] << " - " << i << "\t" << graph[i][parent[i]] << endl;
+}
 
-    minCost[0] = 0;
-    parent[0] = -1;
+void primMST(vector<vector<int>>& graph) {
+    vector<int> parent(V); 
+    vector<int> key(V); 
+    vector<bool> mstSet(V);
 
-    for (int count = 0; count < n - 1; ++count)
-    {
-        int u = minCostEdge(n, minCost, visited);
-        if (u == -1)
-            break;
+  
+    for (int i = 0; i < V; ++i) {
+        key[i] = INT_MAX;
+        mstSet[i] = false;
+    }
 
-        visited[u] = true;
+    key[0] = 0; 
+    parent[0] = -1; 
+    
+    for (int count = 0; count < V - 1; ++count) {
+        
+        int u = minKey(key, mstSet);
 
-        if (parent[u] != -1)
-            mst.push_back({parent[u], u});
+        mstSet[u] = true;
 
-        for (int v = 0; v < n; ++v)
-        {
-            if (graph[u][v] != 0 && !visited[v] && graph[u][v] < minCost[v])
-            {
-                minCost[v] = graph[u][v];
+        for (int v = 0; v < V; ++v) {
+        
+            if (graph[u][v] && !mstSet[v] && graph[u][v] < key[v]) {
                 parent[v] = u;
+                key[v] = graph[u][v];
             }
         }
     }
 
-    return mst;
+    printMST(parent, graph);
 }
 
-int main()
-{
-    int n = 4;
+int main() {
+  
     vector<vector<int>> graph = {
-        {0, 1, 3, 4},
-        {1, 0, 2, 0},
-        {3, 2, 0, 5},
-        {4, 0, 5, 0}};
+        {0, 2, 0, 6, 0},
+        {2, 0, 3, 8, 5},
+        {0, 3, 0, 0, 7},
+        {6, 8, 0, 0, 9},
+        {0, 5, 7, 9, 0}
+    };
 
-    vector<pair<int, int>> mst = primMST(graph, n);
-
-    int totalCost = 0;
-    cout << "Minimum Spanning Tree (MST) edges:" << endl;
-    for (auto &edge : mst)
-    {
-        cout << edge.first << " - " << edge.second << endl;
-        totalCost += graph[edge.first][edge.second];
-    }
-    cout << "Total cost of MST: " << totalCost << endl;
+    // Find and print the minimum spanning tree using Prim's algorithm
+    primMST(graph);
 
     return 0;
 }

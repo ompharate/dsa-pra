@@ -1,91 +1,87 @@
 #include <iostream>
 #include <queue>
 #include <stack>
-
 #define MAX 100
-
+using namespace std;
 class Graph
 {
-private:
     int V;
-    int adjMatrix[MAX][MAX];
+    int adj[MAX][MAX];
 
 public:
-    Graph(int vertices)
+    Graph(int v)
     {
-        V = vertices;
-
-        for (int i = 0; i < V; ++i)
+        this->V = v;
+        for (int i = 0; i < v; i++)
         {
-            for (int j = 0; j < V; ++j)
+            for (int j = 0; j < v; j++)
             {
-                adjMatrix[i][j] = 0;
+                adj[i][j] = 0;
             }
         }
     }
 
     void addEdge(int u, int v)
     {
-        adjMatrix[u][v] = 1;
-        adjMatrix[v][u] = 1;
+        adj[u][v] = 1;
+        adj[v][u] = 1;
     }
 
     void BFS(int start)
     {
         bool visited[MAX] = {false};
-        std::queue<int> q;
-
+        queue<int> q;
         visited[start] = true;
         q.push(start);
 
         while (!q.empty())
         {
             int u = q.front();
-            std::cout << u << " ";
+            cout << u;
             q.pop();
 
-            for (int v = 0; v < V; ++v)
+            for (int v = 0; v < V; v++)
             {
-                if (adjMatrix[u][v] && !visited[v])
+                if (adj[u][v] && !visited[v])
                 {
-                    visited[v] = true;
                     q.push(v);
+                    visited[v] = true;
                 }
             }
         }
-        std::cout << std::endl;
     }
 
     void DFS(int start)
     {
         bool visited[MAX] = {false};
-        std::stack<int> s;
+        stack<int> s;
         s.push(start);
 
         while (!s.empty())
         {
+
             int u = s.top();
             s.pop();
-
             if (!visited[u])
             {
-                std::cout << u << " ";
+
+                cout << u;
                 visited[u] = true;
 
-                // Push unvisited neighbors onto the stack
-                for (int v = V - 1; v >= 0; --v)
+                for (int v = 0; v < V; v++)
                 {
-                    if (adjMatrix[u][v] && !visited[v])
+                    if (adj[u][v] && !visited[v])
                     {
                         s.push(v);
+                        visited[v] = true;
+                        cout << v;
+                        break;
                     }
                 }
             }
         }
-        std::cout << std::endl;
-    }
+    };
 };
-
 int main()
 {
     int vertices, edges;
@@ -110,6 +106,5 @@ int main()
 
     std::cout << "Depth First Search (DFS): ";
     graph.DFS(0);
-
     return 0;
 }
